@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1cd91c6ced4f9a45aadd4b6508efcde, type: 3}
+  m_Name: d_YellowGameBlockData
+  m_EditorClassIdentifier: 
+  blockType: 6
+  defaultIcon: {fileID: 21300000, guid: bfa3ab0aa83c9d64d8e776eaca3dda42, type: 3}
+  conditionIcons:
+  - {fileID: 21300000, guid: 02d564988c58e8844b576876e708fbcc, type: 3}
+  - {fileID: 21300000, guid: 1578891f8015e9140a85f6ad81df271b, type: 3}
+  - {fileID: 21300000, guid: 24f8fc02248dedd40acb8360490cfb60, type: 3}
