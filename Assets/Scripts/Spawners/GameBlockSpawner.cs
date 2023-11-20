@@ -16,13 +16,9 @@ public class GameBlockSpawner : Spawner
 		return null;
 	}
 
-	public GameBlock SpawnBlock(GameBlockConfig gameBlockConfig, Vector3 position, Transform parent = null)
+	public GameBlock SpawnBlock(Vector3 position, Transform parent = null)
 	{
-		if (gameBlockConfig)
-		{
-			var block = GameBlockFactory.Create(gameBlockConfig, position, transform.rotation, parent);
-			return block;
-		}
-		return null;
+		var block = GameBlockFactory.Create(_gameBlockConfig, position, transform.rotation, parent);
+		return block;
 	}
 }

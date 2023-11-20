@@ -9,6 +9,7 @@ public partial class GameBlock : MonoBehaviour
 	, IEntityLateUpdate
 {
 	public GameBlockConfig config;
+	public GameBlockType blockType;
 	public IEntitySystem[] allSystems;
 	public IUpdate[] updateSystems;
 	public ILateUpdate[] lateUpdateSystems;

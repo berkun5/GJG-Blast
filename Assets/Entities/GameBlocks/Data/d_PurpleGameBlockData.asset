@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1cd91c6ced4f9a45aadd4b6508efcde, type: 3}
   m_Name: d_PurpleGameBlockData
   m_EditorClassIdentifier: 
-  blockType: 2
+  blockType: 4
   defaultIcon: {fileID: 21300000, guid: 7290875387205854f875fb3c5dcfa579, type: 3}
   conditionIcons:
   - {fileID: 21300000, guid: 85816ef5ee8b9854687c3305e391121d, type: 3}

@@ -3,13 +3,14 @@ using Gruffdev.BCS;
 
 public static class GameBlockFactory
 {
+	public static int spawnIndex;
 	public static GameBlock CreatePooled(GameBlockConfig config, Vector3 position, Quaternion rotation, Transform parent = null)
 	{
 		if (GameBlockEntityManager.I.inactiveEntities.Count > 0)
 		{
 			GameBlock entity = GameBlockEntityManager.I.inactiveEntities[0];
 			entity.gameObject.SetActive(true);
-		
+
 			Transform transform = entity.transform;
 			transform.position = position;
 			transform.rotation = rotation;
@@ -25,13 +26,12 @@ public static class GameBlockFactory
 			return Create(config, position, rotation, parent);
 		}
 	}
-
 	public static GameBlock Create(GameBlockConfig config, Vector3 position, Quaternion rotation, Transform parent = null)
 	{
 		// Create the GameBlock game object
-		GameBlock entity = new GameObject(config.name).AddComponent<GameBlock>();
+		GameBlock entity = new GameObject($"{spawnIndex}{config.name}").AddComponent<GameBlock>();
+		spawnIndex++;
 
-		
 		Transform transform = entity.transform;
 		transform.position = position;
 		transform.rotation = rotation;

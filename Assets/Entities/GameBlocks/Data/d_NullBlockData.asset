@@ -10,11 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b1cd91c6ced4f9a45aadd4b6508efcde, type: 3}
-  m_Name: d_GreenGameBlockData
+  m_Name: d_NullBlockData
   m_EditorClassIdentifier: 
-  blockType: 2
-  defaultIcon: {fileID: 21300000, guid: c84d953cf20dc904da58a22b20af61cb, type: 3}
-  conditionIcons:
-  - {fileID: 21300000, guid: 51e40b92b669e9540b1aed920cdb25f9, type: 3}
-  - {fileID: 21300000, guid: 94be9739eff8d6b4ab7ca4d872a83dae, type: 3}
-  - {fileID: 21300000, guid: 2e8284a233470554ea113878f2ce3e15, type: 3}
+  blockType: 0
+  defaultIcon: {fileID: 10917, guid: 0000000000000000f000000000000000, type: 0}
+  conditionIcons: []
