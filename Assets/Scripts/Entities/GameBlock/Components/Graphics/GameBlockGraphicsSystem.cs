@@ -16,26 +16,26 @@ public class GameBlockGraphicsSystem : GameBlockSystem<GameBlockGraphicsConfig>
 	public override void LateSetup()
 	{
 		base.LateSetup();
-		ApplySkin(config.skinData);
 		AddEvents();
 	}
 	private void AddEvents()
 	{
-		gameBlock.events.onBlockTypeChanged -= BlockTypeChanged;
-		gameBlock.events.onBlockTypeChanged += BlockTypeChanged;
-
 		gameBlock.events.onMatchingBlockCountChanged -= MatchingBlockCountChanged;
 		gameBlock.events.onMatchingBlockCountChanged += MatchingBlockCountChanged;
 	}
-	public void ApplySkin(GameBlockSkinData skinData)
+	public void ApplySkin()
 	{
-		ClearSkin();
+		if (gameBlock.blockType == GameBlockType.None)
+			gameBlock.blockType = GridManager.I.GetRandomBlock();
 
+		ClearSkin();
+		var skinData = config.skinData;
 		skinInstance = Instantiate(skinData.prefab, transform.position, transform.rotation, transform);
 		skinInstance.Init(this);
 		rect = skinInstance.GetComponent<RectTransform>();
 		blockIcon = skinInstance.GetComponentInChildren<Image>(true);
-		gameBlock.events?.onSkinApplied(skinInstance);
+		gameBlock.events?.onSkinApplied(skinInstance, gameBlock.blockType);
+		BlockTypeChanged(gameBlock.blockType);
 	}
 	public void ClearSkin()
 	{

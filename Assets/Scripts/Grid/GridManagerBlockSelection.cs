@@ -3,10 +3,10 @@ using UnityEngine;
 
 public partial class GridManager : MonoBehaviour
 {
-	private GameBlockType GetRandomBlock()
+	public GameBlockType GetRandomBlock()
 	{
 		GameBlockType[] blockTypes = (GameBlockType[])Enum.GetValues(typeof(GameBlockType));
-		int randIndex = UnityEngine.Random.Range(0, blockTypes.Length);
+		int randIndex = UnityEngine.Random.Range(1, blockTypes.Length);
 
 		return blockTypes[randIndex];
 	}

@@ -5,10 +5,8 @@ using UnityEngine;
 public class GameBlockSkinInstance : MonoBehaviour
 {
 	public GameBlockGraphicsSystem graphics { get; private set; }
-	public RectTransform rectTransform { get; private set; }
 	public void Init(GameBlockGraphicsSystem graphicsSystem)
 	{
 		graphics = graphicsSystem;
-		rectTransform = GetComponent<RectTransform>();
 	}
 }

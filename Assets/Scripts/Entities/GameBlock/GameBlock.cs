@@ -1,5 +1,6 @@
 using UnityEngine;
 using Gruffdev.BCS;
+using System;
 
 [AddComponentMenu("GameBlock/GameBlock")]
 public partial class GameBlock : MonoBehaviour
@@ -10,6 +11,7 @@ public partial class GameBlock : MonoBehaviour
 {
 	public GameBlockConfig config;
 	public GameBlockType blockType;
+	public RectTransform gameBlockRect;
 	public IEntitySystem[] allSystems;
 	public IUpdate[] updateSystems;
 	public ILateUpdate[] lateUpdateSystems;
@@ -49,5 +51,10 @@ public partial class GameBlock : MonoBehaviour
 	{
 		for (int i = 0; i < fixedUpdateSystems.Length; i++)
 			fixedUpdateSystems[i].OnFixedUpdate();
+	}
+
+	internal void DoScale()
+	{
+		throw new NotImplementedException();
 	}
 }

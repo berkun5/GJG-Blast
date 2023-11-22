@@ -29,13 +29,13 @@ public static class GameBlockFactory
 	public static GameBlock Create(GameBlockConfig config, Vector3 position, Quaternion rotation, Transform parent = null)
 	{
 		// Create the GameBlock game object
-		GameBlock entity = new GameObject($"{spawnIndex}{config.name}").AddComponent<GameBlock>();
+		GameBlock entity = new GameObject($"{spawnIndex}{config.name}", typeof(RectTransform)).AddComponent<GameBlock>();
 		spawnIndex++;
 
-		Transform transform = entity.transform;
-		transform.position = position;
-		transform.rotation = rotation;
-		transform.SetParent(parent);
+		entity.gameBlockRect = entity.GetComponent<RectTransform>();
+		entity.gameBlockRect.localPosition = position;
+		entity.gameBlockRect.localRotation = rotation;
+		entity.gameBlockRect.SetParent(parent, false);
 
 		// Construct the GameBlock MonoBehaviour components
 		foreach (var componentConfig in config.components)
