@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gridLevel: 1
   rows: 5
-  columns: 5
-  widthOffset: 17.9
-  heightOffset: 18.3
+  columns: 3
+  widthOffset: 20
+  heightOffset: 20
+  configBlockPool: 000000000200000004000000

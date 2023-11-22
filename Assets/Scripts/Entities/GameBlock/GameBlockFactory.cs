@@ -11,10 +11,10 @@ public static class GameBlockFactory
 			GameBlock entity = GameBlockEntityManager.I.inactiveEntities[0];
 			entity.gameObject.SetActive(true);
 
-			Transform transform = entity.transform;
-			transform.position = position;
-			transform.rotation = rotation;
-			transform.SetParent(parent);
+			entity.gameBlockRect = entity.GetComponent<RectTransform>();
+			entity.gameBlockRect.localPosition = position;
+			entity.gameBlockRect.localRotation = rotation;
+			entity.gameBlockRect.SetParent(parent, false);
 
 			foreach (var system in entity.allSystems)
 				system.ReusedSetup();

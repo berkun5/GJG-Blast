@@ -18,7 +18,7 @@ public class GameBlockSpawner : Spawner
 
 	public GameBlock SpawnBlock(Vector3 position, Transform parent = null)
 	{
-		var block = GameBlockFactory.Create(_gameBlockConfig, position, transform.rotation, parent);
+		var block = GameBlockFactory.CreatePooled(_gameBlockConfig, position, transform.rotation, parent);
 		return block;
 	}
 }

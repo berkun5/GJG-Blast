@@ -1,12 +1,12 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 [AddComponentMenu("GameBlock/Coordinates")]
 public class GameBlockCoordinatesSystem : GameBlockSystem<GameBlockCoordinatesConfig>
 {
-	public int row;//{ get; private set; }
-	public int column;//{ get; private set; }
-	public GameBlock upperNeighbor { get; private set; }
+	public int row { get; private set; }
+	public int column { get; private set; }
 	public List<GameBlock> neighbors /*{ get; private set; } */= new List<GameBlock>();
 	public List<GameBlock> matchingBlocks/* { get; private set; } */= new List<GameBlock>();
 
@@ -16,25 +16,47 @@ public class GameBlockCoordinatesSystem : GameBlockSystem<GameBlockCoordinatesCo
 		AddEvents();
 	}
 
+	public override void ReusedSetup()
+	{
+		base.ReusedSetup();
+		AddEvents();
+	}
 	private void AddEvents()
 	{
-	}
+		gameBlock.events.onSkinRemoved -= SkinRemoved;
+		gameBlock.events.onSkinRemoved += SkinRemoved;
 
+		gameBlock.events.onBlockedTypeChanged -= BlockTypeChanged;
+		gameBlock.events.onBlockedTypeChanged += BlockTypeChanged;
+	}
+	private void SkinRemoved()
+	{
+		neighbors.Clear();
+		matchingBlocks.Clear();
+	}
+	private void BlockTypeChanged(GameBlockType type)
+	{
+		ResetNeighbors();
+	}
+	public void ResetNeighbors()
+	{
+		SetNeighbors();
+		SetMatches();
+	}
 	public void SetCoordinates((int, int) _coords)
 	{
 		row = _coords.Item1;
 		column = _coords.Item2;
 	}
-
 	public void SetNeighbors()
 	{
 		var newNeighbors = new List<GameBlock>();
 		// Up
 		if (row - 1 >= 0)
 		{
-			upperNeighbor = GridManager.I.GetBlockAtCoordinates(row - 1, column);
-			if (upperNeighbor)
-				newNeighbors.Add(upperNeighbor);
+			var n = GridManager.I.GetBlockAtCoordinates(row - 1, column);
+			if (n)
+				newNeighbors.Add(n);
 		}
 		// Down
 		if (row + 1 < GridManager.I.rows)
@@ -67,10 +89,8 @@ public class GameBlockCoordinatesSystem : GameBlockSystem<GameBlockCoordinatesCo
 		matchingBlocks.Clear();
 		foreach (var neighbor in neighbors)
 			CheckAndAddMatchingBlocks(neighbor);
-
 		gameBlock.events.onMatchingBlockCountChanged(matchingBlocks.Count);
 	}
-
 	private void CheckAndAddMatchingBlocks(GameBlock currentBlock)
 	{
 		if (TypesAreMatching(currentBlock.coordinates) && !matchingBlocks.Contains(currentBlock))
@@ -80,7 +100,6 @@ public class GameBlockCoordinatesSystem : GameBlockSystem<GameBlockCoordinatesCo
 				CheckAndAddMatchingBlocks(nestedNeighbor);
 		}
 	}
-
 	private bool TypesAreMatching(GameBlockCoordinatesSystem neighbor)
 	{
 		// Add your logic here to compare types

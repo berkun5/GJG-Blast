@@ -13,13 +13,18 @@ public class GameBlockPhysicsSystem : GameBlockSystem<GameBlockPhysicsConfig>
 	public override void Init(GameBlock gameBlock, GameBlockPhysicsConfig config)
 	{
 		base.Init(gameBlock, config);
-		gameBlock.events.onSkinApplied -= InitBlockButton;
-		gameBlock.events.onSkinApplied += InitBlockButton;
+		AddEvents();
 	}
 
-	public override void LateSetup()
+	public override void ReusedSetup()
 	{
-		base.LateSetup();
+		base.ReusedSetup();
+		AddEvents();
+	}
+	private void AddEvents()
+	{
+		gameBlock.events.onSkinApplied -= InitBlockButton;
+		gameBlock.events.onSkinApplied += InitBlockButton;
 	}
 
 	private void InitBlockButton(GameBlockSkinInstance instance, GameBlockType type)
@@ -54,8 +59,6 @@ public class GameBlockPhysicsSystem : GameBlockSystem<GameBlockPhysicsConfig>
 			gameBlock.coordinates.matchingBlocks.Remove(matchingBlocks[i]);
 			var coords = (matchingBlocks[i].coordinates.row, matchingBlocks[i].coordinates.column);
 			blastedCoordinates.Add(coords);
-			//matchingBlocks[i].events.onBlasted(coords);
-			matchingBlocks[i].events.isBlasted = true;
 			var otherBlockAnim = matchingBlocks[i].animations;
 
 			int index = i;

@@ -41,14 +41,14 @@ public class GridManagerEditor : Editor
 												  1,
 												  false);
 
-		//if (check.changed)
-		//{
-		if (confExt)
-			EditorUtility.SetDirty(confExt);
+		if (check.changed)
+		{
+			if (confExt)
+				EditorUtility.SetDirty(confExt);
 
-		serializedObject.ApplyModifiedProperties();
-		RefreshSkinEditor(confExt);
-		//}
+			serializedObject.ApplyModifiedProperties();
+			RefreshSkinEditor(confExt);
+		}
 	}
 	private void DrawProperties()
 	{

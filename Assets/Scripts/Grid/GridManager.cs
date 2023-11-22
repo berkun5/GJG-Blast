@@ -96,25 +96,14 @@ public partial class GridManager : MonoBehaviour
 	}
 	private GameBlock UpdateGridElement(int _row, int _column)
 	{
-		var _currentIndex = GetGridIndex(_row, _column);
 		var _pos = GetGridPosition(_row, _column);
-		//Pool|Create element
-		var _gridElements = GameBlockEntityManager.I.allEntities;
-		GameBlock block;
-		//if (_currentIndex < _gridElements.Count)
-		//{
-		//	block = _gridElements[_currentIndex];
-		//	block.gameObject.SetActive(true);
-		//	Debug.Log("enabling:" + block.gameObject.name);
-		//}
-		//else
-		block = blockSpawner.SpawnBlock(_canvasRect.anchoredPosition, _canvasRect);
+		var block = blockSpawner.SpawnBlock(_canvasRect.anchoredPosition, _canvasRect);
+		var blockRect = block.gameBlockRect;
 
 		//position and size skin
 		block.coordinates.SetCoordinates((_row, _column));
 		block.graphics.ApplySkin();
 
-		var blockRect = block.gameBlockRect;
 		blockRect.sizeDelta = new Vector2(_blockSize, _blockSize);
 		blockRect.anchoredPosition = _pos;
 		return block;
@@ -134,7 +123,6 @@ public partial class GridManager : MonoBehaviour
 		for (int i = 0; i < _gridElements.Count; i++)
 			_gridElements[i].coordinates.SetMatches();
 	}
-
 
 	private void Update()
 	{

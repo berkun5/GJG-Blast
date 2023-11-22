@@ -14,12 +14,41 @@ public partial class GridManager : MonoBehaviour
 			if (block)
 				block.gameObject.SetActive(false);
 		}
-		ChangeRows(blastedCoordinates);
+		var recycledBlocks = ChangeRows(blastedCoordinates);
 		SetNeighborsAndMatches();
+		CheckDeadlocks(recycledBlocks);
 	}
 
-	private void ChangeRows(List<(int, int)> blastedCoordinates)
+
+	private void CheckDeadlocks(List<GameBlock> recycledBlocks)
 	{
+		var randomIndex = UnityEngine.Random.Range(0, recycledBlocks.Count);
+		if (IsDeadlock())
+		{
+			for (int i = 0; i < recycledBlocks.Count; i++)
+			{
+				// Randomly decide whether to skip this iteration
+				bool skipIteration = UnityEngine.Random.Range(0f, 1f) < 0.5f;
+				if (i == randomIndex || !skipIteration)
+				{
+					var block = recycledBlocks[i];
+					var neighborCount = block.coordinates.neighbors.Count;
+					var randomNeighbor = block.coordinates.neighbors[UnityEngine.Random.Range(0, neighborCount)];
+					GameBlockType forceMatchingType = randomNeighbor.blockType;
+					recycledBlocks[i].events.onBlockedTypeChanged(forceMatchingType);
+
+					for (int nc = 0; nc < neighborCount; nc++)
+					{
+						var n = block.coordinates.neighbors[nc];
+						n.coordinates.ResetNeighbors();
+					}
+				}
+			}
+		}
+	}
+	private List<GameBlock> ChangeRows(List<(int, int)> blastedCoordinates)
+	{
+		var recycledBlocks = new List<GameBlock>();
 		List<int> blastedRows = new List<int>();
 		List<int> allBlastedColumns = new List<int>();
 		foreach (var (blastedRow, blastedCol) in blastedCoordinates)
@@ -58,26 +87,35 @@ public partial class GridManager : MonoBehaviour
 			for (int i = rows - 1; i >= 0; i--)
 			{
 				var blockOrigin = GetBlockAtCoordinates(i, col);
-
 				if (!blockOrigin) //if blasted on the bottom
 				{
 					iterationIncreased++;
 					continue;
 				}
 
-				blockOrigin.coordinates.SetCoordinates((i + iterationIncreased, col));
-				blockOrigin.gameBlockRect.anchoredPosition = GetGridPosition(i + iterationIncreased, col);
+				var movedRow = i + iterationIncreased;
+				blockOrigin.coordinates.SetCoordinates((movedRow, col));
+
+				float duration = 0.3f + (movedRow * 0.05f);
+				var endPos = GetGridPosition(movedRow, col);
+				blockOrigin.animations.SlideAnimation(endPos, duration);
+
+				//blockOrigin.gameBlockRect.DOAnchorPos(GetGridPosition(movedRow, col), duration)
+				//						 .SetEase(Ease.OutBack);
 			}
+
 
 			for (int i = 0; i < rowCount; i++)
 			{
 				var block = blockSpawner.SpawnBlock(_canvasRect.anchoredPosition, _canvasRect);
+				recycledBlocks.Add(block);
 				block.coordinates.SetCoordinates((i, col));
 				block.graphics.ApplySkin();
 				block.gameBlockRect.sizeDelta = new Vector2(_blockSize, _blockSize);
 				block.gameBlockRect.anchoredPosition = GetGridPosition(i, col);
 			}
 		}
-	}
 
+		return recycledBlocks;
+	}
 }

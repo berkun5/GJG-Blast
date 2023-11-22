@@ -11,76 +11,74 @@ public class GameBlockAnimationsSystem : GameBlockSystem<GameBlockAnimationsConf
 		AddEvents();
 	}
 
-	public override void LateSetup()
+	public override void ReusedSetup()
 	{
-		base.LateSetup();
+		base.ReusedSetup();
+		AddEvents();
 	}
 
 	private void AddEvents()
 	{
 		gameBlock.events.onSkinApplied -= FirstSpawnAnimation;
 		gameBlock.events.onSkinApplied += FirstSpawnAnimation;
-		//gameBlock.events.onBlockTypeChanged += SpawnAnimation;
+
+		gameBlock.events.onSkinRemoved -= SkinRemoved;
+		gameBlock.events.onSkinRemoved += SkinRemoved;
 	}
 
+	private void SkinRemoved()
+	{
+		DOTween.Kill(gameBlock.graphics.rect, true);
+		DOTween.Kill(gameBlock.gameBlockRect, true);
+	}
 
 	private void FirstSpawnAnimation(GameBlockSkinInstance instance, GameBlockType type)
 	{
 		if (gameBlock.blockType == GameBlockType.None)
 			return;
 
-		RectTransform skinRect = gameBlock.graphics.rect;
-		Vector2 startPosition = new Vector2(skinRect.anchoredPosition.x, Screen.height + skinRect.rect.height / 2f);
+		RectTransform rect = gameBlock.graphics.rect;
+		DOTween.Kill(rect);
+
+		Vector2 startPosition = new Vector2(rect.anchoredPosition.x, Screen.height + rect.rect.height / 2f);
 		float duration = 0.3f + (gameBlock.coordinates.row * 0.05f);
 		float delay = gameBlock.coordinates.column * 0.05f;
-		skinRect.DOAnchorPos(startPosition, duration)
+
+		rect.DOAnchorPos(startPosition, duration)
 				.SetDelay(delay)
 				.From()
-				.SetEase(Ease.OutBack);
+				.SetEase(Ease.OutSine);
 
 		gameBlock.events.onSkinApplied -= FirstSpawnAnimation;
 	}
 
 	public void DoMergeAnimation(Vector2 endValue, Action onCompleteCallback)
 	{
-		RectTransform skinRect = gameBlock.gameBlockRect;
-		DOTween.Complete(skinRect);
-		skinRect.DOAnchorPos(endValue, config.mergeDuration)
+		RectTransform rect = gameBlock.graphics.rect;
+		DOTween.Complete(rect);
+		rect.DOAnchorPos(endValue, config.mergeDuration)
 				.SetEase(Ease.InBack, 3)
 				.OnComplete(() => onCompleteCallback());
 	}
 
 	public void DoFailedMergeAnimation()
 	{
-		RectTransform skinRect = gameBlock.graphics.rect;
-		if (!DOTween.IsTweening(skinRect))
-			skinRect.DOPunchScale(punch: skinRect.localScale * .25f,
+		RectTransform rect = gameBlock.graphics.rect;
+		if (!DOTween.IsTweening(rect))
+			rect.DOPunchScale(punch: rect.localScale * .25f,
 								  duration: .2f,
 								  vibrato: 2,
 								  elasticity: .1f)
 					.SetEase(Ease.InBack);
 	}
 
-	public void SlideAnimation(Vector2 startPos)
+	public void SlideAnimation(Vector2 endPos, float duration)
 	{
-		RectTransform skinRect = gameBlock.graphics.rect;
-		float duration = 0.3f + (gameBlock.coordinates.row * 0.05f);
+		RectTransform rect = gameBlock.gameBlockRect;
+		DOTween.Complete(rect);
+		rect.DOAnchorPos(endPos, duration)
+								 .SetEase(Ease.OutBack);
 
-		skinRect.DOAnchorPos(startPos, duration)
-				.From()
-				.SetEase(Ease.OutBack);
 	}
 
-	public void SlideAnimation()
-	{
-		RectTransform skinRect = gameBlock.graphics.rect;
-		//skinRect.anchoredPosition = gameBlock.coordinates.gridPosition;
-
-		var startPos = new Vector2(skinRect.anchoredPosition.x, Screen.height + skinRect.rect.height / 2f);
-		float duration = 0.3f + (gameBlock.coordinates.row * 0.05f);
-
-		skinRect.DOAnchorPos(startPos, duration)
-				.From()
-				.SetEase(Ease.OutBack);
-	}
 }
