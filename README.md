@@ -24,8 +24,7 @@
   🎯<b>Goal</b>:
      
   Tap and blast a minimum of two same types(colors) of adjacent Blocks.
-  - The first row will never get obstacles (Box-Blocks).
-  - Every time new blocks appear, if it is a deadlock situation, at least one of them will be converted to their upcoming neighbors before appearing in the scene.
+
 
   📜<b>Gameplay Rules</b>:
 
