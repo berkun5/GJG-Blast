@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: GC-Level-01
   m_EditorClassIdentifier: 
   gridLevel: 1
-  rows: 7
-  columns: 7
-  widthOffset: 0
-  heightOffset: 0
+  rows: 6
+  columns: 6
+  widthOffset: 13.5
+  heightOffset: 13.9
   configBlockPool: 05000000070000000200000001000000

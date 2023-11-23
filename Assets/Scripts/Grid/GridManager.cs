@@ -10,6 +10,7 @@ public partial class GridManager : MonoBehaviour
 	public int rows { get; private set; }
 	public int columns { get; private set; }
 	[SerializeField] private GameBlockSpawner blockSpawner;
+	[SerializeField] private bool enableAutoMatching;
 	private RectTransform _canvasRect;
 	private Vector2 _gridStartPos, _canvasSize;
 	private float _blockSize, _widthOffset, _heightOffset;
@@ -29,12 +30,16 @@ public partial class GridManager : MonoBehaviour
 		_heightOffset = config.heightOffset;
 		rows = config.rows;
 		columns = config.columns;
-		GenerateGrid();
 
-		//StartCoroutine(TestRandom());
+		StopAllCoroutines();
+		GenerateGrid();
+		StartCoroutine(TestRandom());
 	}
 	public IEnumerator TestRandom()
 	{
+		if (!enableAutoMatching)
+			yield break;
+
 		yield return new WaitForSeconds(3f);
 		while (true)
 		{
@@ -43,6 +48,7 @@ public partial class GridManager : MonoBehaviour
 			yield return new WaitForSeconds(0.7f);
 		}
 	}
+
 	public GameBlock GetBlockAtCoordinates(int row, int col)
 	{
 		var gridElements = GameBlockEntityManager.I.activeEntities;
