@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e456eb5443f75aa4a8bdcfac2a297762, type: 3}
   m_Name: GameblockAnimations
   m_EditorClassIdentifier: 
-  foldedOut: 0
+  foldedOut: 1
+  MERGE_ANIMATION_DURATION: 0.2

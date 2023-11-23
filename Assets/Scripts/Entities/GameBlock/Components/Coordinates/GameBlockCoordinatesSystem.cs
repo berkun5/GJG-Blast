@@ -1,14 +1,13 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System;
 
 [AddComponentMenu("GameBlock/Coordinates")]
 public class GameBlockCoordinatesSystem : GameBlockSystem<GameBlockCoordinatesConfig>
 {
 	public int row { get; private set; }
 	public int column { get; private set; }
-	public List<GameBlock> neighbors /*{ get; private set; } */= new List<GameBlock>();
-	public List<GameBlock> matchingBlocks/* { get; private set; } */= new List<GameBlock>();
+	public List<GameBlock> neighbors { get; private set; } = new List<GameBlock>();
+	public List<GameBlock> matchingBlocks { get; private set; } = new List<GameBlock>();
 
 	public override void Init(GameBlock gameBlock, GameBlockCoordinatesConfig config)
 	{
@@ -34,10 +33,7 @@ public class GameBlockCoordinatesSystem : GameBlockSystem<GameBlockCoordinatesCo
 		neighbors.Clear();
 		matchingBlocks.Clear();
 	}
-	private void BlockTypeChanged(GameBlockType type)
-	{
-		ResetNeighbors();
-	}
+	private void BlockTypeChanged(GameBlockType type) => ResetNeighbors();
 	public void ResetNeighbors()
 	{
 		SetNeighbors();
@@ -87,6 +83,10 @@ public class GameBlockCoordinatesSystem : GameBlockSystem<GameBlockCoordinatesCo
 	public void SetMatches()
 	{
 		matchingBlocks.Clear();
+
+		if (!gameBlock.events.IsPlayableBlock())
+			return;
+
 		foreach (var neighbor in neighbors)
 			CheckAndAddMatchingBlocks(neighbor);
 		gameBlock.events.onMatchingBlockCountChanged(matchingBlocks.Count);
@@ -102,7 +102,6 @@ public class GameBlockCoordinatesSystem : GameBlockSystem<GameBlockCoordinatesCo
 	}
 	private bool TypesAreMatching(GameBlockCoordinatesSystem neighbor)
 	{
-		// Add your logic here to compare types
 		var contains = matchingBlocks.Contains(neighbor.gameBlock);
 		var matchingBlock = gameBlock.blockType == neighbor.gameBlock.blockType;
 		return !contains && matchingBlock;

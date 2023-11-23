@@ -1,5 +1,4 @@
 using UnityEngine;
-using Gruffdev.BCS;
 
 [CreateAssetMenu(fileName = "Physics", menuName = "Data/GameBlock/Physics")]
 public class GameBlockPhysicsConfig : GameBlockComponentConfig

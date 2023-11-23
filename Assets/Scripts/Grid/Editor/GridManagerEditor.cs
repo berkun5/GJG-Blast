@@ -1,6 +1,7 @@
 using Gruffdev.BCSEditor;
 using UnityEditor;
 using UnityEditor.AnimatedValues;
+using UnityEngine;
 
 [CustomEditor(typeof(GridManager))]
 public class GridManagerEditor : Editor
@@ -27,14 +28,14 @@ public class GridManagerEditor : Editor
 	public override void OnInspectorGUI()
 	{
 		DrawProperties();
+		DrawReInit();
 		DrawConfig();
 	}
 
 	private void DrawConfig()
 	{
 		using var check = new EditorGUI.ChangeCheckScope();
-
-		var confExt = EditorExt.FoldoutObject<GridConfig>("Config",
+		var confExt = EditorExt.FoldoutObject<GridConfig>("Assigned Grid Config",
 												  ref skinEditorFoldout,
 												  gridManager.config,
 												  _skinEditor,
@@ -54,9 +55,21 @@ public class GridManagerEditor : Editor
 	{
 		DrawDefaultInspector();
 		serializedObject.ApplyModifiedProperties();
-		EditorGUILayout.Space(25);
+		EditorGUILayout.Space(20);
 	}
 
+	private void DrawReInit()
+	{
+		bool runtime = EditorApplication.isPlaying;
+		GUI.backgroundColor = runtime ? Color.green : Color.gray;
+
+		if (GUILayout.Button("ReInitialize Grid (RuntimeOnly)"))
+			if (runtime)
+				gridManager.Init(gridManager.config);
+
+		GUI.backgroundColor = Color.white;
+		EditorGUILayout.Space(5);
+	}
 	private void RefreshSkinEditor(GridConfig conf)
 	{
 		_skinEditor = conf

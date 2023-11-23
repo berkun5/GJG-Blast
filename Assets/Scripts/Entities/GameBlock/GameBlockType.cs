@@ -7,5 +7,5 @@ public enum GameBlockType
 	Purple = 4,
 	Red = 5,
 	Yellow = 6,
-	BoxObstacle = 7
+	Obstacle = 7
 }

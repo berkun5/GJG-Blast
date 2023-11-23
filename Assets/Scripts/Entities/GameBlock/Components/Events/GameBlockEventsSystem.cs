@@ -1,21 +1,18 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 
 [AddComponentMenu("GameBlock/Events")]
 public class GameBlockEventsSystem : GameBlockSystem<GameBlockEventsConfig>
 {
-	private List<GameBlockType> NonPlayableBlocks = new List<GameBlockType>
-	{
-		GameBlockType.None,
-		//GameBlockType.BoxObstacle
-	};
-
 	public Action<GameBlockSkinInstance, GameBlockType> onSkinApplied = delegate { };
 	public Action onSkinRemoved = delegate { };
 	public Action<GameBlockType> onBlockedTypeChanged = delegate { };
 	public Action<int> onMatchingBlockCountChanged = delegate { };
-
+	public Action onBlasted = delegate { };
+	public Action onNeighborBlasted = delegate { };
+	public Action<int> onTakeDamage = delegate { }; //passes current health
 	public override void Init(GameBlock gameBlock, GameBlockEventsConfig config)
 	{
 		base.Init(gameBlock, config);
@@ -31,6 +28,6 @@ public class GameBlockEventsSystem : GameBlockSystem<GameBlockEventsConfig>
 	private void SetBlockType(GameBlockSkinInstance instance, GameBlockType type) => gameBlock.blockType = type;
 	public bool IsPlayableBlock()
 	{
-		return !NonPlayableBlocks.Contains(gameBlock.blockType);
+		return !GridManager.I.nonPlayableBlocks.Contains(gameBlock.blockType);
 	}
 }

@@ -31,16 +31,23 @@ public class GameBlockGraphicsSystem : GameBlockSystem<GameBlockGraphicsConfig>
 
 		gameBlock.events.onBlockedTypeChanged -= BlockTypeChanged;
 		gameBlock.events.onBlockedTypeChanged += BlockTypeChanged;
+
+		gameBlock.events.onTakeDamage -= TakeDamageGraphics;
+		gameBlock.events.onTakeDamage += TakeDamageGraphics;
 	}
-	public void ApplySkin()
+
+	public void ApplySkin(bool onlyPlayable = false)
 	{
 		ClearSkin();
 
 		if (gameBlock.blockType == GameBlockType.None)
-			gameBlock.blockType = GridManager.I.GetRandomBlock();
+			gameBlock.blockType = GridManager.I.GetRandomBlock(onlyPlayable);
 
 		var skinData = config.skinData;
-		skinInstance = Instantiate(skinData.prefab, transform.position, transform.rotation, transform);
+		skinInstance = Instantiate(skinData.prefab,
+									transform.position,
+									transform.rotation,
+									transform);
 		skinInstance.Init(this);
 
 		rect = skinInstance.GetComponent<RectTransform>();
@@ -86,7 +93,19 @@ public class GameBlockGraphicsSystem : GameBlockSystem<GameBlockGraphicsConfig>
 						img = blockData.conditionIcons[2];
 				break;
 		}
+		blockIcon.sprite = img;
+	}
+
+	private void TakeDamageGraphics(int _health)
+	{
+		var blockData = AllGameBlockData.GetBlockData(gameBlock.blockType);
+		var img = blockData.defaultIcon;
+
+		if (_health - 1 <= blockData.conditionIcons.Count)
+			img = blockData.conditionIcons[Mathf.Max(0, _health - 1)];
 
 		blockIcon.sprite = img;
+
+		//maybe show some particles when hp <= 0
 	}
 }

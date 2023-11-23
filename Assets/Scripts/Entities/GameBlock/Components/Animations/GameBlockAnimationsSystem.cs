@@ -1,6 +1,5 @@
 using UnityEngine;
 using DG.Tweening;
-using System;
 
 [AddComponentMenu("GameBlock/Animations")]
 public class GameBlockAnimationsSystem : GameBlockSystem<GameBlockAnimationsConfig>
@@ -10,13 +9,11 @@ public class GameBlockAnimationsSystem : GameBlockSystem<GameBlockAnimationsConf
 		base.Init(gameBlock, config);
 		AddEvents();
 	}
-
 	public override void ReusedSetup()
 	{
 		base.ReusedSetup();
 		AddEvents();
 	}
-
 	private void AddEvents()
 	{
 		gameBlock.events.onSkinApplied -= FirstSpawnAnimation;
@@ -24,6 +21,9 @@ public class GameBlockAnimationsSystem : GameBlockSystem<GameBlockAnimationsConf
 
 		gameBlock.events.onSkinRemoved -= SkinRemoved;
 		gameBlock.events.onSkinRemoved += SkinRemoved;
+
+		gameBlock.events.onTakeDamage -= TakeDamageAnimation;
+		gameBlock.events.onTakeDamage += TakeDamageAnimation;
 	}
 
 	private void SkinRemoved()
@@ -31,11 +31,10 @@ public class GameBlockAnimationsSystem : GameBlockSystem<GameBlockAnimationsConf
 		DOTween.Kill(gameBlock.graphics.rect, true);
 		DOTween.Kill(gameBlock.gameBlockRect, true);
 	}
-
 	private void FirstSpawnAnimation(GameBlockSkinInstance instance, GameBlockType type)
 	{
-		if (gameBlock.blockType == GameBlockType.None)
-			return;
+		//if (gameBlock.blockType == GameBlockType.None)
+		//return;
 
 		RectTransform rect = gameBlock.graphics.rect;
 		DOTween.Kill(rect);
@@ -45,40 +44,50 @@ public class GameBlockAnimationsSystem : GameBlockSystem<GameBlockAnimationsConf
 		float delay = gameBlock.coordinates.column * 0.05f;
 
 		rect.DOAnchorPos(startPosition, duration)
-				.SetDelay(delay)
-				.From()
-				.SetEase(Ease.OutSine);
+			.SetDelay(delay)
+			.From()
+			.SetEase(Ease.OutSine);
 
 		gameBlock.events.onSkinApplied -= FirstSpawnAnimation;
 	}
-
-	public void DoMergeAnimation(Vector2 endValue, Action onCompleteCallback)
+	public void DoMergeAnimation(Vector2 endValue)
 	{
-		RectTransform rect = gameBlock.graphics.rect;
+		RectTransform rect = gameBlock.gameBlockRect;
 		DOTween.Complete(rect);
-		rect.DOAnchorPos(endValue, config.mergeDuration)
-				.SetEase(Ease.InBack, 3)
-				.OnComplete(() => onCompleteCallback());
+		rect.DOAnchorPos(endValue, config.MERGE_ANIMATION_DURATION)
+			.SetEase(Ease.InBack);
 	}
-
 	public void DoFailedMergeAnimation()
 	{
 		RectTransform rect = gameBlock.graphics.rect;
 		if (!DOTween.IsTweening(rect))
 			rect.DOPunchScale(punch: rect.localScale * .25f,
-								  duration: .2f,
-								  vibrato: 2,
-								  elasticity: .1f)
-					.SetEase(Ease.InBack);
+							duration: .2f,
+							vibrato: 2,
+							elasticity: .1f)
+				.SetEase(Ease.InBack);
 	}
-
 	public void SlideAnimation(Vector2 endPos, float duration)
 	{
 		RectTransform rect = gameBlock.gameBlockRect;
 		DOTween.Complete(rect);
 		rect.DOAnchorPos(endPos, duration)
-								 .SetEase(Ease.OutBack);
-
+			.SetEase(Ease.OutBack);
 	}
 
+	private void TakeDamageAnimation(int remainingHealth)
+	{
+		if (remainingHealth <= 0)
+			return;
+
+		var duration = config.MERGE_ANIMATION_DURATION / 1.1f; //shouldnt be longer than merge time, it might cancel merge anim
+
+		RectTransform rect = gameBlock.graphics.rect;
+		if (!DOTween.IsTweening(rect))
+			rect.DOPunchScale(punch: rect.localScale * .25f,
+							duration,
+							vibrato: 2,
+							elasticity: .1f)
+				.SetEase(Ease.OutBack);
+	}
 }

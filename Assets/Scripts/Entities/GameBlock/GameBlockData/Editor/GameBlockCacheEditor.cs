@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using Gruffdev.BCSEditor;
 using UnityEditor;
 using UnityEditor.AnimatedValues;
-using UnityEngine;
 
 [CustomEditor(typeof(GameBlockCache))]
 public class GameBlockCacheEditor : Editor

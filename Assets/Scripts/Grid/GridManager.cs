@@ -1,4 +1,4 @@
-using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,133 +6,83 @@ public partial class GridManager : MonoBehaviour
 {
 	public static GridManager I;
 	public GridConfig config;
-	public List<(int, int)> gridCoordinates = new List<(int, int)>();
-	[SerializeField] private GameBlockSpawner blockSpawner;
-	private RectTransform _canvasRect;
-	private Vector2 _canvasSize;
-	private float startX, startY;
-	private float _blockSize, _widthOffset, _heightOffset;
+	public List<(int, int)> gridCoordinates { get; private set; } = new List<(int, int)>();
 	public int rows { get; private set; }
 	public int columns { get; private set; }
+	[SerializeField] private GameBlockSpawner blockSpawner;
+	private RectTransform _canvasRect;
+	private Vector2 _gridStartPos, _canvasSize;
+	private float _blockSize, _widthOffset, _heightOffset;
 
 	private void Awake() => I = this;
 	private void Start() => Init(config);
-	private void Init(GridConfig conf)
+	public void Init(GridConfig gridConfig)
 	{
-		if (!conf)
+		if (!gridConfig)
 			return;
 
 		if (!_canvasRect)
 			_canvasRect = GetComponentInChildren<RectTransform>();
 
-		config = conf;
+		config = gridConfig;
 		_widthOffset = config.widthOffset;
 		_heightOffset = config.heightOffset;
 		rows = config.rows;
 		columns = config.columns;
 		GenerateGrid();
-	}
 
+		//StartCoroutine(TestRandom());
+	}
+	public IEnumerator TestRandom()
+	{
+		yield return new WaitForSeconds(3f);
+		while (true)
+		{
+			var activeEntities = GameBlockEntityManager.I.activeEntities;
+			activeEntities[Random.Range(0, activeEntities.Count)].physics.TryMerge();
+			yield return new WaitForSeconds(0.7f);
+		}
+	}
 	public GameBlock GetBlockAtCoordinates(int row, int col)
 	{
-		var _gridElements = GameBlockEntityManager.I.activeEntities;
-		foreach (var block in _gridElements)
+		var gridElements = GameBlockEntityManager.I.activeEntities;
+		foreach (var block in gridElements)
 			if (block.coordinates.row == row && block.coordinates.column == col)
 				return block;
 		return null;
 	}
-
-	private void GenerateGrid()
-	{
-		gridCoordinates.Clear();
-		RecalculateBlockSize();
-
-		startX = -_canvasSize.x / 2f + _blockSize / 2f;
-		startY = _canvasSize.y / 2f - _blockSize / 2f;
-		float totalWidth = columns * _blockSize;
-		float totalHeight = rows * _blockSize;
-
-		// centering the grid to the canvas
-		startX += (_canvasSize.x - totalWidth) / 2f;
-		startY -= (_canvasSize.y - totalHeight) / 2f;
-
-		int currentIndex = 0;
-		for (int row = 0; row < rows; row++)
-			for (int col = 0; col < columns; col++)
-			{
-				UpdateGridElement(row, col);
-				gridCoordinates.Add((row, col));
-				currentIndex++;
-			}
-		PooloutElements(currentIndex);
-		SetNeighborsAndMatches();
-	}
-	public int GetGridIndex(int row, int col)
-	{
-		return row * columns + col;
-	}
 	public Vector2 GetGridPosition(int row, int col)
 	{
+		var startX = _gridStartPos.x;
+		var startY = _gridStartPos.y;
 		float xPos = startX + col * _blockSize;
 		float yPos = startY - row * _blockSize;
 		return new Vector2(xPos, yPos);
 	}
-	private void RecalculateBlockSize()
+
+	public List<(int, int)> GetAllEmptyBelow(int row, int column)
 	{
-		float canvasWidth = _canvasRect.rect.width;
-		float canvasHeight = _canvasRect.rect.height;
-		float widthOffsetPercentage = Mathf.Clamp01(_widthOffset / 100f);
-		float heightOffsetPercentage = Mathf.Clamp01(_heightOffset / 100f);
-		float actualWidthOffset = canvasWidth * widthOffsetPercentage;
-		float actualHeightOffset = canvasHeight * heightOffsetPercentage;
-
-		var w = canvasWidth - actualWidthOffset;
-		var h = canvasHeight - actualHeightOffset;
-		_canvasSize = new Vector2(w, h);
-
-		var colSize = _canvasSize.x / columns;
-		var rowSize = _canvasSize.y / rows;
-		_blockSize = Mathf.Min(colSize, rowSize);
+		//get all the empty blocks below from the given row and column until met an obstacle
+		var emptyBlocks = new List<(int, int)>();
+		var rowCount = rows;
+		for (int k = row; k < rowCount; k++)
+		{
+			var belowBlock = GetBlockAtCoordinates(k, column);
+			if (!belowBlock)
+				emptyBlocks.Add((k, column));
+			else if (!belowBlock.events.IsPlayableBlock())
+				break;
+		}
+		return emptyBlocks;
 	}
-	private GameBlock UpdateGridElement(int _row, int _column)
-	{
-		var _pos = GetGridPosition(_row, _column);
-		var block = blockSpawner.SpawnBlock(_canvasRect.anchoredPosition, _canvasRect);
-		var blockRect = block.gameBlockRect;
 
-		//position and size skin
-		block.coordinates.SetCoordinates((_row, _column));
-		block.graphics.ApplySkin();
-
-		blockRect.sizeDelta = new Vector2(_blockSize, _blockSize);
-		blockRect.anchoredPosition = _pos;
-		return block;
-	}
-	private void PooloutElements(int _currentIndex)
-	{
-		var _gridElements = GameBlockEntityManager.I.allEntities;
-		//pool out element
-		for (int i = _currentIndex; i < _gridElements.Count; i++)
-			_gridElements[i].gameObject.SetActive(false);
-	}
 	public void SetNeighborsAndMatches()
 	{
-		var _gridElements = GameBlockEntityManager.I.activeEntities;
-		for (int i = 0; i < _gridElements.Count; i++)
-			_gridElements[i].coordinates.SetNeighbors();
-		for (int i = 0; i < _gridElements.Count; i++)
-			_gridElements[i].coordinates.SetMatches();
-	}
-
-	private void Update()
-	{
-		if (Input.GetKeyDown(KeyCode.Space))
-		{
-			var block = GetBlockAtCoordinates(0, 0);
-			var vector2 = GetGridPosition(0, 4);
-			block.gameBlockRect.anchoredPosition = new Vector2(vector2.x, vector2.y);
-		}
-		//Init(config);
-		//EditGrid(_heightOffset, _widthOffset, _rows, _columns);
+		//cant match without settings all neighbors first
+		var gridElements = GameBlockEntityManager.I.activeEntities;
+		for (int i = 0; i < gridElements.Count; i++)
+			gridElements[i].coordinates.SetNeighbors();
+		for (int i = 0; i < gridElements.Count; i++)
+			gridElements[i].coordinates.SetMatches();
 	}
 }
