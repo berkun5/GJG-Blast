@@ -25,7 +25,8 @@
      
   Tap and blast a minimum of two same types(colors) of adjacent Blocks.
   
-![ezgif com-video-to-gif](https://github.com/berkun5/GJG-Blast/assets/80388989/1707d637-5476-480e-b64b-642e174b0c2e)
+![ezgif com-video-to-gif](https://github.com/berkun5/GJG-Blast/assets/80388989/e78a1406-ee55-4244-b921-47884a540fb5)
+
 
 
   📜<b>Gameplay Rules</b>:
