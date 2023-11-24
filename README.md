@@ -24,11 +24,11 @@
   🎯<b>Goal</b>:
      
   Tap and blast a minimum of two same types(colors) of adjacent Blocks.
+  
+![ezgif com-video-to-gif](https://github.com/berkun5/GJG-Blast/assets/80388989/1707d637-5476-480e-b64b-642e174b0c2e)
 
 
   📜<b>Gameplay Rules</b>:
-
-  ![ezgif com-crop](https://github.com/berkun5/GJG-Blast/assets/80388989/15697ba4-4b68-4e78-823c-97da438abaeb)
 
   The game will never be in a <b>deadlock</b>, where there are no more moves left to play.
   - The first row will never get obstacles (Box-Blocks).
